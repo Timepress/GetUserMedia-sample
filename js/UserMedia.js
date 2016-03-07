@@ -6,10 +6,10 @@
     var currentCam  = null;
     var photoReady  = false;
 
-    // CSS filters 
+    // CSS filters
     var index     = 0;
     var filters   = ['grayscale', 'sepia', 'blur', 'invert', 'brightness', 'contrast', ''];
-    
+
     // init() - The entry point to the demo code
     // 1. Detect whether getUserMedia() is supported, show an error if not
     // 2. Set up necessary event listners for video tag and the webcam 'switch' button
@@ -36,7 +36,7 @@
         }
     };
 
-    
+
     // initializeVideoStream() - Callback function when getUserMedia() returns successfully with a mediaStream object
     // 1. Set the mediaStream on the video tag
     // 2. Use 'srcObject' attribute to determine whether to use the standard-based API or the legacy version
@@ -67,20 +67,40 @@
             if (navigator.msSaveBlob) {
                 var imgData = canvas.msToBlob('image/jpeg');
                 navigator.msSaveBlob(imgData, 'myPhoto.jpg');
+                alert(imgData)
+                //var formInput = document.getElementsByClassName("pic-input");
+                //var formData = new FormData(formInput.form);
+                //formData.append(formInput.name, imgData)
             }
             else {
                 var imgData = canvas.toDataURL('image/jpeg');
-                var link    = document.getElementById('saveImg');
-                link.href   = imgData;
-                link.download = 'myPhoto.jpg';
-                link.click();
+                //var link    = document.getElementById('saveImg');
+                //link.href   = imgData;
+                //alert(imgData)
+                var output = encodeURIComponent(imgData);
+
+                var storage = document.getElementById('temp-storage');
+                $("#temp-storage").append("SEPARATOR" + output)
+
+                var cur_path = 'uploads';
+                //var Parameters = "image=" + output + "&filedir=" + cur_path;
+/*
+                $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1:3000/templates/get_pictures",
+                    data: Parameters,
+                    success : function(data)
+                    {
+                        console.log("screenshot done");
+                    }
+                  });
+                  */
             }
             canvas.removeEventListener('click', savePhoto);
             document.getElementById('photoViewText').innerHTML = '';
             photoReady = false;
         }
     };
-
 
     // capture() - Function called when click on video tag
     // 1. Capture a video frame from the video tag and render on the canvas element
@@ -146,7 +166,7 @@
             .catch(getUserMediaError);
     };
 
-    
+
     // deviceChanged() - Handle devicechange event
     // 1. Reset webcamList
     // 2. Re-enumerate webcam devices
@@ -159,7 +179,7 @@
         navigator.mediaDevices.enumerateDevices().then(devicesCallback);
         /*eslint-enable*/
     };
-    
+
 
     // devicesCallback() - Callback function for device enumeration
     // 1. Identify all webcam devices and store the info in the webcamList
